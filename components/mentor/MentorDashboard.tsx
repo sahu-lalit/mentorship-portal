@@ -5,27 +5,28 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import type { User } from '@/types';
+import { clearAuth, getAuthUser } from '@/lib/auth';
 
 export const MentorDashboard: React.FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      const parsedUser = JSON.parse(userData);
-      if (parsedUser.role !== 'mentor') {
-        router.push('/login');
-      } else {
-        setUser(parsedUser);
-      }
-    } else {
+    const parsedUser = getAuthUser();
+    if (!parsedUser) {
       router.push('/login');
+      return;
+    }
+
+    if (parsedUser.role !== 'mentor') {
+      router.push('/login');
+    } else {
+      setUser(parsedUser as unknown as User);
     }
   }, [router]);
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    clearAuth();
     router.push('/login');
   };
 
@@ -37,12 +38,12 @@ export const MentorDashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <header className="bg-white dark:bg-gray-800 shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
             Mentor Dashboard
           </h1>
-          <div className="flex items-center gap-4">
-            <span className="text-gray-700 dark:text-gray-300">
+          <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+            <span className="text-sm sm:text-base text-gray-700 dark:text-gray-300 truncate">
               Welcome, {user.name}
             </span>
             <Button variant="outline" size="sm" onClick={handleLogout}>
@@ -53,8 +54,8 @@ export const MentorDashboard: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6">
           {/* My Students Card */}
           <Card>
             <CardHeader>
