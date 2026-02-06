@@ -8,35 +8,35 @@ import { clearAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
 
-type BackendMeetingDetails = {
+type MentorMeetingDetails = {
   id: string;
   topic: string;
   description: string;
-  status: string;
-  createdAt?: string;
-  updatedAt?: string;
+  user?: {
+    name: string;
+    email: string;
+  };
   meeting?: {
-    mentor?: {
-      id: string;
-      name: string;
-      email: string;
-    };
     meetingSummary?: string;
     meetingDescription?: string;
     meetingStart?: string;
     meetingEnd?: string;
     meetLink?: string;
   };
+  adminNotes?: string;
+  status: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
-export function MeetingDetailsDialog(props: {
+export function MentorMeetingDetailsDialog(props: {
   isOpen: boolean;
   meetingId: string | null;
   onClose: () => void;
 }) {
   const { isOpen, meetingId, onClose } = props;
   const [loading, setLoading] = useState(false);
-  const [details, setDetails] = useState<BackendMeetingDetails | null>(null);
+  const [details, setDetails] = useState<MentorMeetingDetails | null>(null);
 
   useEffect(() => {
     if (!isOpen || !meetingId) return;
@@ -47,8 +47,8 @@ export function MeetingDetailsDialog(props: {
 
     (async () => {
       try {
-        const res = await apiClient.get(`/modules/user/meetings/${meetingId}`);
-        const data = (res.data?.responseResult ?? null) as BackendMeetingDetails | null;
+        const res = await apiClient.get(`/modules/mentor/meetings/${meetingId}`);
+        const data = (res.data?.responseResult ?? null) as MentorMeetingDetails | null;
         if (!cancelled) setDetails(data);
       } catch (err) {
         const status = axios.isAxiosError(err) ? err.response?.status : undefined;
@@ -58,7 +58,7 @@ export function MeetingDetailsDialog(props: {
           return;
         }
         toast.error('Failed to load meeting details');
-        console.error('Meeting details error:', err);
+        console.error('Mentor meeting details error:', err);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -113,6 +113,14 @@ export function MeetingDetailsDialog(props: {
 
           {!loading && details && (
             <>
+              {!!details.user && (
+                <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Student</div>
+                  <div className="text-sm text-gray-700 dark:text-gray-300">{details.user.name}</div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">{details.user.email}</div>
+                </div>
+              )}
+
               <div>
                 <div className="text-sm text-gray-500 dark:text-gray-400">Topic</div>
                 <div className="text-base font-semibold text-gray-900 dark:text-white">{details.topic}</div>
@@ -136,11 +144,20 @@ export function MeetingDetailsDialog(props: {
                 </div>
               </div>
 
-              {!!details.meeting?.mentor && (
-                <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-4">
-                  <div className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Mentor</div>
-                  <div className="text-sm text-gray-700 dark:text-gray-300">{details.meeting.mentor.name}</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">{details.meeting.mentor.email}</div>
+              {!!details.meeting?.meetingStart && !!details.meeting?.meetingEnd && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Meeting start</div>
+                    <div className="text-sm text-gray-900 dark:text-white">
+                      {new Date(details.meeting.meetingStart).toLocaleString()}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Meeting end</div>
+                    <div className="text-sm text-gray-900 dark:text-white">
+                      {new Date(details.meeting.meetingEnd).toLocaleString()}
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -166,7 +183,9 @@ export function MeetingDetailsDialog(props: {
           )}
 
           <div className="pt-2 flex justify-end">
-            <Button variant="outline" onClick={onClose}>Close</Button>
+            <Button variant="outline" onClick={onClose}>
+              Close
+            </Button>
           </div>
         </div>
       </div>

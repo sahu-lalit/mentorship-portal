@@ -12,6 +12,9 @@ import { clearAuth, getAuthUser } from '@/lib/auth';
 import { apiClient } from '@/lib/apiClient';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { ProfileTab } from '@/components/profile/ProfileTab';
+import { ProfileAvatarButton } from '@/components/profile/ProfileAvatarButton';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 interface Meeting {
   id: string;
@@ -62,17 +65,6 @@ type BackendHistoryItem = {
     meetingEnd?: string;
     meetLink?: string;
   };
-};
-
-type BackendPendingRequest = {
-  id: string;
-  preferredDate: string;
-  preferredStartTime: string;
-  preferredEndTime?: string;
-  status: string;
-  updatedAt?: string;
-  topic?: string;
-  description?: string;
 };
 
 const mapBackendStatus = (status: string): Meeting['status'] => {
@@ -126,11 +118,10 @@ const isoDateFromYmd = (ymd: string) => {
 export const StudentDashboard: React.FC = () => {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
-  const [activeTab, setActiveTab] = useState<'home' | 'requests' | 'history'>('home');
+  const [activeTab, setActiveTab] = useState<'home' | 'history' | 'profile'>('home');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [upcomingMeetings, setUpcomingMeetings] = useState<Meeting[]>([]);
-  const [pendingRequests, setPendingRequests] = useState<Meeting[]>([]);
   const [historyMeetings, setHistoryMeetings] = useState<Meeting[]>([]);
   const [meetingsLoading, setMeetingsLoading] = useState(false);
   const [detailsMeetingId, setDetailsMeetingId] = useState<string | null>(null);
@@ -142,14 +133,12 @@ export const StudentDashboard: React.FC = () => {
   const fetchMeetings = async () => {
     setMeetingsLoading(true);
     try {
-      const [upcomingRes, requestsRes, historyRes] = await Promise.all([
+      const [upcomingRes, historyRes] = await Promise.all([
         apiClient.get('/modules/user/meetings/upcomming'),
-        apiClient.get('/modules/user/requests'),
         apiClient.get('/modules/user/history'),
       ]);
 
       const upcomingRaw = (upcomingRes.data?.responseResult ?? []) as BackendUpcomingMeeting[];
-      const requestsRaw = (requestsRes.data?.responseResult ?? []) as BackendPendingRequest[];
       const historyRaw = (historyRes.data?.responseResult ?? []) as BackendHistoryItem[];
 
       const mappedUpcoming: Meeting[] = upcomingRaw.map((m) => ({
@@ -181,17 +170,6 @@ export const StudentDashboard: React.FC = () => {
       }));
 
       setUpcomingMeetings(mappedUpcoming);
-      const mappedRequests: Meeting[] = requestsRaw.map((r) => ({
-        id: r.id,
-        topic: r.topic ?? 'Mentorship Request',
-        details: r.description ?? `Status: ${r.status}`,
-        preferredDate: r.preferredDate,
-        preferredStartTime: r.preferredStartTime,
-        preferredEndTime: r.preferredEndTime,
-        status: mapBackendStatus(r.status),
-        updatedAt: r.updatedAt,
-      }));
-      setPendingRequests(mappedRequests);
       setHistoryMeetings(mappedHistory);
     } catch (err) {
       const status = axios.isAxiosError(err) ? err.response?.status : undefined;
@@ -237,7 +215,7 @@ export const StudentDashboard: React.FC = () => {
 
   const handleRescheduleMeeting = async (id: string) => {
     // New API requires POST with payload; open dialog instead.
-    const all = [...upcomingMeetings, ...pendingRequests, ...historyMeetings];
+    const all = [...upcomingMeetings, ...historyMeetings];
     const found = all.find((m) => m.id === id);
     setRescheduleMeetingId(id);
     setRescheduleInitial({
@@ -346,7 +324,10 @@ export const StudentDashboard: React.FC = () => {
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        <div className="w-full max-w-sm px-6">
+          <Skeleton className="h-6 w-44 mb-4" />
+          <Skeleton className="h-24 w-full rounded-xl" />
+        </div>
       </div>
     );
   }
@@ -367,14 +348,14 @@ export const StudentDashboard: React.FC = () => {
             </svg>
           </button>
           <h1 className="text-lg font-bold text-gray-900 dark:text-white">
-            {activeTab === 'home' ? 'Dashboard' : activeTab === 'requests' ? 'Requests' : 'History'}
+            {activeTab === 'home' ? 'Dashboard' : activeTab === 'history' ? 'History' : 'Profile'}
           </h1>
         </div>
-        <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        </div>
+        <ProfileAvatarButton
+          onClick={() => setActiveTab('profile')}
+          onUnauthorized={() => router.push('/login')}
+          fallbackGradientClassName="bg-linear-to-br from-green-500 to-emerald-600"
+        />
       </div>
 
       {/* Overlay for mobile sidebar */}
@@ -391,7 +372,7 @@ export const StudentDashboard: React.FC = () => {
       } lg:translate-x-0`}>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-linear-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
               <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
@@ -431,23 +412,6 @@ export const StudentDashboard: React.FC = () => {
 
             <button
               onClick={() => {
-                setActiveTab('requests');
-                setIsSidebarOpen(false);
-              }}
-              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
-                activeTab === 'requests'
-                  ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
-                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
-              }`}
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
-              </svg>
-              <span className="font-medium">Pending Requests</span>
-            </button>
-
-            <button
-              onClick={() => {
                 setActiveTab('history');
                 setIsSidebarOpen(false);
               }}
@@ -461,6 +425,23 @@ export const StudentDashboard: React.FC = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
               <span className="font-medium">History</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setActiveTab('profile');
+                setIsSidebarOpen(false);
+              }}
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                activeTab === 'profile'
+                  ? 'bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span className="font-medium">Profile</span>
             </button>
           </nav>
         </div>
@@ -480,16 +461,16 @@ export const StudentDashboard: React.FC = () => {
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-2">
               {activeTab === 'home'
                 ? 'Dashboard'
-                : activeTab === 'requests'
-                  ? 'Pending Requests'
-                  : 'Meeting History'}
+                : activeTab === 'history'
+                  ? 'Meeting History'
+                  : 'Profile'}
             </h1>
             <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
               {activeTab === 'home'
                 ? 'Schedule and manage your mentorship sessions'
-                : activeTab === 'requests'
-                  ? 'View your pending and reschedule requests'
-                  : 'View your completed and cancelled meetings'}
+                : activeTab === 'history'
+                  ? 'View your completed and cancelled meetings'
+                  : 'Your account information'}
             </p>
           </div>
 
@@ -497,8 +478,17 @@ export const StudentDashboard: React.FC = () => {
           {activeTab === 'home' ? (
             <div className="space-y-6">
               {meetingsLoading && (
-                <div className="flex items-center justify-center py-10">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600"></div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                    <Skeleton className="h-5 w-48 mb-3" />
+                    <Skeleton className="h-4 w-56 mb-4" />
+                    <Skeleton className="h-9 w-28" />
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                    <Skeleton className="h-5 w-48 mb-3" />
+                    <Skeleton className="h-4 w-56 mb-4" />
+                    <Skeleton className="h-9 w-28" />
+                  </div>
                 </div>
               )}
 
@@ -544,45 +534,20 @@ export const StudentDashboard: React.FC = () => {
                 </div>
               )}
             </div>
-          ) : activeTab === 'requests' ? (
+          ) : activeTab === 'history' ? (
             <div>
               {meetingsLoading && (
-                <div className="flex items-center justify-center py-10">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600"></div>
-                </div>
-              )}
-
-              {pendingRequests.length > 0 ? (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                  {pendingRequests.map((meeting) => (
-                    <MeetingCard
-                      key={meeting.id}
-                      meeting={meeting}
-                      onViewDetails={handleViewDetails}
-                      onCancel={handleCancelMeeting}
-                      onReschedule={handleReschedule}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5l5 5v11a2 2 0 01-2 2z" />
-                  </svg>
-                  <h3 className="text-base sm:text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    No pending requests
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
-                    Your pending mentorship requests will appear here
-                  </p>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div>
-              {meetingsLoading && (
-                <div className="flex items-center justify-center py-10">
-                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600"></div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                    <Skeleton className="h-5 w-44 mb-3" />
+                    <Skeleton className="h-4 w-56 mb-4" />
+                    <Skeleton className="h-9 w-28" />
+                  </div>
+                  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+                    <Skeleton className="h-5 w-44 mb-3" />
+                    <Skeleton className="h-4 w-56 mb-4" />
+                    <Skeleton className="h-9 w-28" />
+                  </div>
                 </div>
               )}
 
@@ -613,6 +578,12 @@ export const StudentDashboard: React.FC = () => {
                 </div>
               )}
             </div>
+          ) : (
+            <ProfileTab
+              onUnauthorized={() => {
+                router.push('/login');
+              }}
+            />
           )}
         </div>
       </main>
