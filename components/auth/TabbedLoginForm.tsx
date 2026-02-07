@@ -90,110 +90,133 @@ export const TabbedLoginForm: React.FC = () => {
   const isStudent = activeTab === 'student';
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden backdrop-blur-sm">
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-gray-700">
+      <div className="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
         <button
           onClick={() => handleTabChange('student')}
-          className={`flex-1 py-3 sm:py-4 px-3 sm:px-6 text-center font-semibold transition-all relative ${
+          className={`flex-1 py-4 px-6 text-center font-bold transition-all duration-300 relative group ${
             isStudent
-              ? 'text-green-600 dark:text-green-400'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              ? 'text-green-700 dark:text-green-400 bg-white dark:bg-gray-800'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50'
           }`}
         >
-          <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-            <span className="text-sm sm:text-base">Student</span>
+          <div className="flex items-center justify-center gap-2">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+              isStudent 
+                ? 'bg-linear-to-br from-green-500 to-emerald-600 shadow-md' 
+                : 'bg-gray-200 dark:bg-gray-700 group-hover:bg-gray-300 dark:group-hover:bg-gray-600'
+            }`}>
+              <svg className={`w-5 h-5 ${
+                isStudent ? 'text-white' : 'text-gray-500 dark:text-gray-400'
+              }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <span>Student</span>
           </div>
           {isStudent && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-green-500 to-emerald-600"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-green-500 to-emerald-600 shadow-sm"></div>
           )}
         </button>
         
         <button
           onClick={() => handleTabChange('mentor')}
-          className={`flex-1 py-3 sm:py-4 px-3 sm:px-6 text-center font-semibold transition-all relative ${
+          className={`flex-1 py-4 px-6 text-center font-bold transition-all duration-300 relative group ${
             !isStudent
-              ? 'text-blue-600 dark:text-blue-400'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+              ? 'text-blue-700 dark:text-blue-400 bg-white dark:bg-gray-800'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50'
           }`}
         >
-          <div className="flex items-center justify-center gap-1.5 sm:gap-2">
-            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <span className="text-sm sm:text-base">Mentor</span>
+          <div className="flex items-center justify-center gap-2">
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 ${
+              !isStudent 
+                ? 'bg-linear-to-br from-blue-500 to-indigo-600 shadow-md' 
+                : 'bg-gray-200 dark:bg-gray-700 group-hover:bg-gray-300 dark:group-hover:bg-gray-600'
+            }`}>
+              <svg className={`w-5 h-5 ${
+                !isStudent ? 'text-white' : 'text-gray-500 dark:text-gray-400'
+              }`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <span>Mentor</span>
           </div>
           {!isStudent && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-linear-to-r from-blue-500 to-indigo-600 shadow-sm"></div>
           )}
         </button>
       </div>
 
       {/* Form Content */}
-      <div className="p-5 sm:p-6 md:p-8">
+      <div className="p-8 md:p-10">
         {/* Header */}
-        <div className="text-center mb-5 sm:mb-6">
-          <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 shadow-lg ${
+        <div className="text-center mb-8">
+          <div className={`w-20 h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-xl transform transition-all duration-300 ${
             isStudent 
-              ? 'bg-gradient-to-br from-green-500 to-emerald-600' 
-              : 'bg-gradient-to-br from-blue-500 to-indigo-600'
+              ? 'bg-linear-to-br from-green-500 to-emerald-600' 
+              : 'bg-linear-to-br from-blue-500 to-indigo-600'
           }`}>
             {isStudent ? (
-              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             ) : (
-              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
             )}
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1.5 sm:mb-2">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
             {isStudent ? 'Student Login' : 'Mentor Login'}
           </h2>
-          <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+          <p className="text-base text-gray-600 dark:text-gray-400">
             {isStudent ? 'Access your learning journey' : 'Guide and inspire students'}
           </p>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="text-red-600 text-sm text-center bg-red-50 dark:bg-red-900/20 py-2 rounded-lg mb-4">
-            {error}
+          <div className="mb-6 p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span className="text-sm font-medium text-red-700 dark:text-red-300">{error}</span>
+            </div>
           </div>
         )}
 
         {/* Loading State */}
         {loading && (
-          <div className="text-center mb-4">
-            <div className="flex items-center justify-center gap-2">
-              <svg className={`animate-spin h-5 w-5 ${isStudent ? 'text-green-600' : 'text-blue-600'}`} viewBox="0 0 24 24">
+          <div className="text-center mb-6">
+            <div className="inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-gray-50 dark:bg-gray-900/50">
+              <svg className={`animate-spin h-5 w-5 ${isStudent ? 'text-green-600 dark:text-green-400' : 'text-blue-600 dark:text-blue-400'}`} viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
               </svg>
-              <span className="text-sm text-gray-600 dark:text-gray-400">Logging in...</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Logging in...</span>
             </div>
           </div>
         )}
 
         {/* Google OAuth Button */}
-        <div className="flex justify-center">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={handleGoogleError}
-            theme="outline"
-            size="large"
-            text="continue_with"
-            shape="rectangular"
-          />
+        <div className="flex justify-center mb-6">
+          <div className="transform transition-all duration-200 hover:scale-105">
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+              theme="outline"
+              size="large"
+              text="continue_with"
+              shape="rectangular"
+            />
+          </div>
         </div>
 
         {/* Info Text */}
-        <p className="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
-          By continuing, you agree to our Terms of Service and Privacy Policy
+        <p className="text-center text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+          By continuing, you agree to our <span className="font-medium text-gray-700 dark:text-gray-300">Terms of Service</span> and <span className="font-medium text-gray-700 dark:text-gray-300">Privacy Policy</span>
         </p>
       </div>
     </div>

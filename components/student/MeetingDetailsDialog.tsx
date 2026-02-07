@@ -73,9 +73,10 @@ export function MeetingDetailsDialog(props: {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-lg w-full my-8 flex flex-col max-h-[90vh]">
+        {/* Sticky Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-2xl sticky top-0 z-10">
           <div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">Meeting Details</h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Request ID: {meetingId}</p>
@@ -91,7 +92,8 @@ export function MeetingDetailsDialog(props: {
           </button>
         </div>
 
-        <div className="p-6 space-y-4">
+        {/* Scrollable Content */}
+        <div className="p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
           {loading && (
             <div className="space-y-4">
               <Skeleton className="h-4 w-24" />
@@ -189,8 +191,11 @@ export function MeetingDetailsDialog(props: {
           {!loading && !details && (
             <div className="text-sm text-gray-600 dark:text-gray-400">No details found.</div>
           )}
+        </div>
 
-          <div className="pt-2 flex justify-end">
+        {/* Sticky Footer */}
+        <div className="p-6 pt-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-b-2xl sticky bottom-0">
+          <div className="flex justify-end">
             <Button variant="outline" onClick={onClose}>Close</Button>
           </div>
         </div>
