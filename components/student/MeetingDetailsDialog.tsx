@@ -15,6 +15,7 @@ type BackendMeetingDetails = {
   status: string;
   createdAt?: string;
   updatedAt?: string;
+  adminNotes?: string;
   meeting?: {
     mentor?: {
       id: string;
@@ -141,6 +142,30 @@ export function MeetingDetailsDialog(props: {
                   <div className="text-sm font-semibold text-gray-900 dark:text-white mb-2">Mentor</div>
                   <div className="text-sm text-gray-700 dark:text-gray-300">{details.meeting.mentor.name}</div>
                   <div className="text-sm text-gray-600 dark:text-gray-400">{details.meeting.mentor.email}</div>
+                </div>
+              )}
+
+              {!!details.meeting?.meetingStart && !!details.meeting?.meetingEnd && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Meeting start</div>
+                    <div className="text-sm text-gray-900 dark:text-white">
+                      {new Date(details.meeting.meetingStart).toLocaleString()}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">Meeting end</div>
+                    <div className="text-sm text-gray-900 dark:text-white">
+                      {new Date(details.meeting.meetingEnd).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {!!details.adminNotes && details.adminNotes !== 'null' && (
+                <div className="rounded-xl border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-4">
+                  <div className="text-sm font-semibold text-amber-900 dark:text-amber-300 mb-2">Admin Notes</div>
+                  <div className="text-sm text-amber-800 dark:text-amber-200 whitespace-pre-wrap">{details.adminNotes}</div>
                 </div>
               )}
 

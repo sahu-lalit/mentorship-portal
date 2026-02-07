@@ -161,6 +161,13 @@ export function MentorMeetingDetailsDialog(props: {
                 </div>
               )}
 
+              {!!details.adminNotes && details.adminNotes !== 'null' && (
+                <div className="rounded-xl border border-amber-200 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 p-4">
+                  <div className="text-sm font-semibold text-amber-900 dark:text-amber-300 mb-2">Admin Notes</div>
+                  <div className="text-sm text-amber-800 dark:text-amber-200 whitespace-pre-wrap">{details.adminNotes}</div>
+                </div>
+              )}
+
               {!!details.meeting?.meetLink && (
                 <a
                   href={details.meeting.meetLink}
