@@ -123,6 +123,7 @@ export const StudentDashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [upcomingMeetings, setUpcomingMeetings] = useState<Meeting[]>([]);
   const [historyMeetings, setHistoryMeetings] = useState<Meeting[]>([]);
+  const [pendingMeetings, setPendingMeetings] = useState<Meeting[]>([]);
   const [meetingsLoading, setMeetingsLoading] = useState(false);
   const [detailsMeetingId, setDetailsMeetingId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -133,13 +134,23 @@ export const StudentDashboard: React.FC = () => {
   const fetchMeetings = async () => {
     setMeetingsLoading(true);
     try {
-      const [upcomingRes, historyRes] = await Promise.all([
+      const [upcomingRes, historyRes, pendingRes] = await Promise.all([
         apiClient.get('/modules/user/meetings/upcomming'),
         apiClient.get('/modules/user/history'),
+        apiClient.get('/modules/user/requests'),
       ]);
 
       const upcomingRaw = (upcomingRes.data?.responseResult ?? []) as BackendUpcomingMeeting[];
       const historyRaw = (historyRes.data?.responseResult ?? []) as BackendHistoryItem[];
+      const pendingRaw = (pendingRes.data?.responseResult ?? []) as Array<{
+        id: string;
+        user: { name: string; email: string };
+        preferredDate: string;
+        preferredStartTime: string;
+        preferredEndTime: string;
+        status: string;
+        updatedAt: string;
+      }>;
 
       const mappedUpcoming: Meeting[] = upcomingRaw.map((m) => ({
         id: m.request?.id ?? m.id,
@@ -169,8 +180,22 @@ export const StudentDashboard: React.FC = () => {
         updatedAt: h.updatedAt,
       }));
 
+      const mappedPending: Meeting[] = pendingRaw
+        .filter((p) => p.status?.toUpperCase() === 'PENDING')
+        .map((p) => ({
+          id: p.id,
+          topic: 'Mentorship Request',
+          details: `Requested by ${p.user.name}`,
+          preferredDate: p.preferredDate,
+          preferredStartTime: p.preferredStartTime,
+          preferredEndTime: p.preferredEndTime,
+          status: 'pending',
+          updatedAt: p.updatedAt,
+        }));
+
       setUpcomingMeetings(mappedUpcoming);
       setHistoryMeetings(mappedHistory);
+      setPendingMeetings(mappedPending);
     } catch (err) {
       const status = axios.isAxiosError(err) ? err.response?.status : undefined;
       if (status === 401) {
@@ -522,6 +547,26 @@ export const StudentDashboard: React.FC = () => {
                   </h2>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {activeMeetings.map(meeting => (
+                      <MeetingCard
+                        key={meeting.id}
+                        meeting={meeting}
+                        onViewDetails={handleViewDetails}
+                        onCancel={handleCancelMeeting}
+                        onReschedule={handleReschedule}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Pending Meetings */}
+              {pendingMeetings.length > 0 && (
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4">
+                    Pending Meetings
+                  </h2>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                    {pendingMeetings.map(meeting => (
                       <MeetingCard
                         key={meeting.id}
                         meeting={meeting}
