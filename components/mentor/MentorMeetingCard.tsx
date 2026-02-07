@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/Button';
+import { SiGooglemeet } from 'react-icons/si';
 
 export type MentorMeetingItem = {
   id: string; // request id
@@ -87,17 +88,22 @@ export function MentorMeetingCard(props: {
           </h3>
           <div className="text-sm text-gray-600 dark:text-gray-400 truncate">{meeting.studentEmail}</div>
 
-          <div className="mt-2 flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-gray-600 dark:text-gray-400">
+          <div className="mt-2 flex items-start gap-x-2 text-sm text-gray-600 dark:text-gray-400">
             {meeting.meetingStart && meeting.meetingEnd ? (
               <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="font-medium">Start:</span>
-                <span>{formatDateTime(meeting.meetingStart)}</span>
-                <span className="text-gray-400 mx-1">•</span>
-                <span className="font-medium">End:</span>
-                <span>{formatDateTime(meeting.meetingEnd)}</span>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">Start:</span>
+                    <span>{formatDateTime(meeting.meetingStart)}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-medium">End:</span>
+                    <span>{formatDateTime(meeting.meetingEnd)}</span>
+                  </div>
+                </div>
               </>
             ) : (
               <>
@@ -130,12 +136,9 @@ export function MentorMeetingCard(props: {
           href={meeting.meetLink}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 mb-4"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors mb-4"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <SiGooglemeet className="w-4 h-4" />
           Join meeting
         </a>
       )}

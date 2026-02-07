@@ -104,12 +104,15 @@ export const MeetingCard: React.FC<MeetingCardProps> = ({
                   <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-medium">Start:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">{formatDateTime(meeting.meetingStart)}</span>
-                    <span className="text-gray-400 mx-1">•</span>
-                    <span className="font-medium">End:</span>
-                    <span className="font-semibold text-gray-900 dark:text-white">{formatDateTime(meeting.meetingEnd)}</span>
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Start:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{formatDateTime(meeting.meetingStart)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">End:</span>
+                      <span className="font-semibold text-gray-900 dark:text-white">{formatDateTime(meeting.meetingEnd)}</span>
+                    </div>
                   </div>
                 </>
               ) : (
