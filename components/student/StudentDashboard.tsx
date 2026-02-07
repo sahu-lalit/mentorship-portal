@@ -397,11 +397,12 @@ export const StudentDashboard: React.FC = () => {
       } lg:translate-x-0`}>
         <div className="p-6">
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 bg-linear-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg">
-              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-            </div>
+            <ProfileAvatarButton
+              onClick={() => setActiveTab('profile')}
+              onUnauthorized={() => router.push('/login')}
+              fallbackGradientClassName="bg-linear-to-br from-green-500 to-emerald-600"
+              sizeClassName="w-12 h-12"
+            />
             <div className="flex-1 min-w-0">
               <h2 className="font-bold text-lg text-gray-900 dark:text-white">Student</h2>
               <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{user.name}</p>
@@ -525,19 +526,19 @@ export const StudentDashboard: React.FC = () => {
               {/* Create Meeting Card */}
               <button
                 onClick={() => setIsDialogOpen(true)}
-                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl p-6 sm:p-8 hover:border-green-500 dark:hover:border-green-500 hover:bg-linear-to-br hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-900/20 dark:hover:to-emerald-900/20 transition-all duration-300 group hover:shadow-lg hover:-translate-y-1"
+                className="w-full border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 hover:border-green-500 dark:hover:border-green-500 hover:bg-linear-to-br hover:from-green-50 hover:to-emerald-50 dark:hover:from-green-900/20 dark:hover:to-emerald-900/20 transition-all duration-300 group hover:shadow-lg"
               >
-                <div className="flex flex-col items-center justify-center gap-3">
-                  <div className="w-12 h-12 sm:w-16 sm:h-16 bg-linear-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-2xl flex items-center justify-center group-hover:from-green-200 group-hover:to-emerald-200 dark:group-hover:from-green-900/50 dark:group-hover:to-emerald-900/50 transition-all duration-300 group-hover:scale-110 shadow-sm">
-                    <svg className="w-6 h-6 sm:w-8 sm:h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-linear-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-lg flex items-center justify-center group-hover:from-green-200 group-hover:to-emerald-200 dark:group-hover:from-green-900/50 dark:group-hover:to-emerald-900/50 transition-all duration-300 shadow-sm shrink-0">
+                    <svg className="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
-                  <div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                  <div className="text-left">
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-white">
                       Schedule a Meet with Mentor
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       Click to create a new mentorship session
                     </p>
                   </div>
@@ -568,7 +569,7 @@ export const StudentDashboard: React.FC = () => {
               {pendingMeetings.length > 0 && (
                 <div>
                   <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white mb-4">
-                    Pending Meetings
+                    Open Requests
                   </h2>
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                     {pendingMeetings.map(meeting => (

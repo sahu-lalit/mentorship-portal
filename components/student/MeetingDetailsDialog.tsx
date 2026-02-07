@@ -7,6 +7,7 @@ import { apiClient } from '@/lib/apiClient';
 import { clearAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/Button';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { SiGooglemeet } from 'react-icons/si';
 
 type BackendMeetingDetails = {
   id: string;
@@ -150,14 +151,14 @@ export function MeetingDetailsDialog(props: {
               {!!details.meeting?.meetingStart && !!details.meeting?.meetingEnd && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Meeting start</div>
-                    <div className="text-sm text-gray-900 dark:text-white">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Meeting start</div>
+                    <div className="text-base font-bold text-gray-900 dark:text-white">
                       {new Date(details.meeting.meetingStart).toLocaleString()}
                     </div>
                   </div>
                   <div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">Meeting end</div>
-                    <div className="text-sm text-gray-900 dark:text-white">
+                    <div className="text-sm text-gray-500 dark:text-gray-400 mb-1">Meeting end</div>
+                    <div className="text-base font-bold text-gray-900 dark:text-white">
                       {new Date(details.meeting.meetingEnd).toLocaleString()}
                     </div>
                   </div>
@@ -176,12 +177,9 @@ export function MeetingDetailsDialog(props: {
                   href={details.meeting.meetLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <SiGooglemeet className="w-5 h-5" />
                   Open meeting link
                 </a>
               )}

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/Button';
+import { SiGooglemeet } from 'react-icons/si';
 
 interface Meeting {
   id: string;
@@ -91,48 +92,52 @@ export const MeetingCard: React.FC<MeetingCardProps> = ({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-200 dark:border-gray-700 p-6 hover:shadow-lg transition-shadow">
       {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
+      <div className="flex items-start justify-between gap-3 mb-4">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
             {meeting.topic}
           </h3>
-          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-            {meeting.meetingStart && meeting.meetingEnd ? (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span className="font-medium">Start:</span>
-                <span>{formatDateTime(meeting.meetingStart)}</span>
-                <span className="text-gray-400 mx-1">•</span>
-                <span className="font-medium">End:</span>
-                <span>{formatDateTime(meeting.meetingEnd)}</span>
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span>{formatDate(meeting.preferredDate)}</span>
-                <span className="text-gray-400">•</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span>
-                  {formatTime(meeting.preferredStartTime)}
-                  {meeting.preferredEndTime ? ` - ${formatTime(meeting.preferredEndTime)}` : ''}
-                </span>
-              </>
-            )}
-          </div>
+          {meeting.status !== 'pending' && (
+            <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+              {meeting.meetingStart && meeting.meetingEnd ? (
+                <>
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="font-medium">Start:</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{formatDateTime(meeting.meetingStart)}</span>
+                    <span className="text-gray-400 mx-1">•</span>
+                    <span className="font-medium">End:</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{formatDateTime(meeting.meetingEnd)}</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span>{formatDate(meeting.preferredDate)}</span>
+                  <span className="text-gray-400">•</span>
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="font-semibold text-gray-900 dark:text-white">
+                    {formatTime(meeting.preferredStartTime)}
+                    {meeting.preferredEndTime ? ` - ${formatTime(meeting.preferredEndTime)}` : ''}
+                  </span>
+                </>
+              )}
+            </div>
+          )}
         </div>
-        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(meeting.status)}`}>
+        <span className={`px-3 py-1 rounded-full text-xs font-semibold shrink-0 ${getStatusColor(meeting.status)}`}>
           {meeting.status.charAt(0).toUpperCase() + meeting.status.slice(1)}
         </span>
       </div>
 
       {/* Details */}
-      {!!meeting.details && (
+      {!!meeting.details && meeting.status !== 'pending' && (
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
           {meeting.details}
         </p>
@@ -143,12 +148,9 @@ export const MeetingCard: React.FC<MeetingCardProps> = ({
           href={meeting.meetLink}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 mb-4"
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors mb-4"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <SiGooglemeet className="w-4 h-4" />
           Join meeting
         </a>
       )}
