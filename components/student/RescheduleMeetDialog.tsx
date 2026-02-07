@@ -22,13 +22,32 @@ export function RescheduleMeetDialog(props: {
   const [preferredStartTime, setPreferredStartTime] = useState('');
   const [preferredEndTime, setPreferredEndTime] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [timeError, setTimeError] = useState('');
 
   useEffect(() => {
     if (!isOpen) return;
     setPreferredDate(initialValue?.preferredDate ?? '');
     setPreferredStartTime(initialValue?.preferredStartTime ?? '');
     setPreferredEndTime(initialValue?.preferredEndTime ?? '');
+    setTimeError('');
   }, [isOpen, initialValue?.preferredDate, initialValue?.preferredStartTime, initialValue?.preferredEndTime]);
+
+  useEffect(() => {
+    if (preferredStartTime && preferredEndTime) {
+      const [startHour, startMin] = preferredStartTime.split(':').map(Number);
+      const [endHour, endMin] = preferredEndTime.split(':').map(Number);
+      const startMinutes = startHour * 60 + startMin;
+      const endMinutes = endHour * 60 + endMin;
+      
+      if (endMinutes <= startMinutes) {
+        setTimeError('End time must be after start time');
+      } else {
+        setTimeError('');
+      }
+    } else {
+      setTimeError('');
+    }
+  }, [preferredStartTime, preferredEndTime]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,6 +129,9 @@ export function RescheduleMeetDialog(props: {
               required
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
             />
+            {timeError && (
+              <p className="mt-2 text-sm text-red-600 dark:text-red-400">{timeError}</p>
+            )}
           </div>
 
           <div className="flex gap-3 pt-4">
@@ -118,7 +140,7 @@ export function RescheduleMeetDialog(props: {
             </Button>
             <Button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !!timeError}
               className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white"
             >
               {submitting ? 'Updating...' : 'Update'}

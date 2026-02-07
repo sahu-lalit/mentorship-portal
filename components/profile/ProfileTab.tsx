@@ -98,10 +98,6 @@ export function ProfileTab(props: { onUnauthorized?: () => void }) {
             <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">Email</div>
             <div className="text-sm sm:text-base text-gray-900 dark:text-white truncate">{profile.email}</div>
           </div>
-
-          <Button variant="outline" size="sm" onClick={fetchProfile}>
-            Refresh
-          </Button>
         </div>
       </div>
     </div>
